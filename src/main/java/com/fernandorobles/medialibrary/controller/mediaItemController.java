@@ -24,34 +24,39 @@ public class mediaItemController {
 
     @GetMapping("/")
     public ResponseEntity<List<MediaItem>> getMediaItems(){
-        List<MediaItem> item = mediaItemService.getMediaItems();
-        return new ResponseEntity<List<MediaItem>>(item, HttpStatus.OK);
+        List<MediaItem> items = mediaItemService.getMediaItems();
+        if(items.size() > 0)
+            return new ResponseEntity<>(items, HttpStatus.OK);
+        else
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<MediaItem> getMediaItem(@PathVariable Long id){
         Optional<MediaItem> item = mediaItemService.getMediaItem(id);
         return item.map(mediaItem -> new ResponseEntity<>(mediaItem, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(new MediaItem(), HttpStatus.NOT_FOUND));
-
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping("/")
     public ResponseEntity<MediaItem> addMediaItem(@RequestBody MediaItem item){
         log.info("addMediaItem: " + item.toString());
         MediaItem mi = mediaItemService.addMediaItem(item);
-        return new ResponseEntity<MediaItem>(mi, HttpStatus.CREATED);
+        return new ResponseEntity<>(mi, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> deleteMediaItem(@RequestParam Long id){
+    public ResponseEntity<Boolean> deleteMediaItem(@PathVariable Long id){
         boolean deleted = mediaItemService.deleteMediaItem(id);
-        return new ResponseEntity<Boolean>(deleted, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<MediaItem> updateMediaItem(@RequestParam Long id, @RequestBody MediaItem item){
+    public ResponseEntity<MediaItem> updateMediaItem(@PathVariable Long id, @RequestBody MediaItem item){
         MediaItem updatedItem = mediaItemService.updateMediaItem(id, item);
-        return new ResponseEntity<MediaItem>(updatedItem, HttpStatus.OK);
+        if(updatedItem.getId() != null)
+            return new ResponseEntity<>(updatedItem, HttpStatus.OK);
+        else
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
