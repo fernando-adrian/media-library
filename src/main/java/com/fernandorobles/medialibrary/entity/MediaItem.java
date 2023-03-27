@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,11 +19,16 @@ public class MediaItem {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
     private String mediaName;
+    @OneToMany(
+            targetEntity = MediaAuthor.class,
+            cascade = CascadeType.PERSIST
+    )
+    private List<MediaAuthor> mediaAuthor;
     private String mediaDescription;
     private MediaCollection mediaCollection;
     @OneToOne(
             targetEntity = MediaSource.class,
-            cascade = CascadeType.ALL
+            cascade = CascadeType.PERSIST
     )
     private MediaSource source;
     private int mediaLength;
@@ -33,6 +40,7 @@ public class MediaItem {
 //    {
 //        1,
 //        "The Last Of Us Remake",
+//        "Naugthy Dog",
 //        "El juego de ps5 de TloU",
 //        "Game",
 //        "PS5"
@@ -46,6 +54,7 @@ public class MediaItem {
 //    {
 //        2,
 //        "Winds of Winter",
+//        "George R. R. Martin",
 //        "sexta novela de cancion de hielo y fuego",
 //        "pdf",
 //        "Book",
@@ -59,6 +68,7 @@ public class MediaItem {
 //    {
 //        3,
 //        "Attack on Titan",
+//        "no tengo idea",
 //        "ultima temporada de la serie",
 //        "Crunchyroll",
 //        "Series",
@@ -72,6 +82,7 @@ public class MediaItem {
 //    {
 //        4,
 //        "Everything Everywhere all at once",
+//        "Daniel Kwan, Daniel Scheinert",
 //        "pelicula ganadora del oscar 23",
 //        "Amazon Prime",
 //        "Movie",
