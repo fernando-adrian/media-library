@@ -16,8 +16,8 @@ public class MediaSource {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    Long id;
-    String name;
-    String source;
-    String description;
+    private Long id;
+    private String name;
+    private String source;
+    private String description;
 }
