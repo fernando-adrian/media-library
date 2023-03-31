@@ -2,6 +2,7 @@ package com.fernandorobles.medialibrary.service;
 
 import com.fernandorobles.medialibrary.entity.MediaItem;
 import com.fernandorobles.medialibrary.repository.MediaItemRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,11 +27,11 @@ public class MediaItemService {
         return mediaItemRepository.save(item);
     }
 
-    public boolean deleteMediaItem(Long id){
+    public void deleteMediaItem(Long id){
 
-        Optional<MediaItem> mediaItem = Optional.of(mediaItemRepository.getReferenceById(id));
-        mediaItem.ifPresent((item) -> mediaItemRepository.delete(item));
-        return mediaItem.isPresent();
+        MediaItem mediaItem = mediaItemRepository.getReferenceById(id);
+        mediaItemRepository.delete(mediaItem);
+
     }
 
     public MediaItem updateMediaItem(Long id, MediaItem item) {

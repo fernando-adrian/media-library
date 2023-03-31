@@ -6,18 +6,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
-import org.w3c.dom.html.HTMLParagraphElement;
 
-import javax.print.attribute.standard.Media;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/media")
 @Slf4j
-public class mediaItemController {
+public class MediaItemController {
 
     @Autowired
     private MediaItemService mediaItemService;
@@ -46,8 +43,8 @@ public class mediaItemController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> deleteMediaItem(@PathVariable Long id){
-        boolean deleted = mediaItemService.deleteMediaItem(id);
+    public ResponseEntity<?> deleteMediaItem(@PathVariable Long id){
+        mediaItemService.deleteMediaItem(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
