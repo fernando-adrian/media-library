@@ -20,4 +20,5 @@ public class MediaSource {
     private String name;
     private String source;
     private String description;
+    private String image;
 }
