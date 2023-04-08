@@ -13,7 +13,8 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/source")
+@CrossOrigin(origins = "http://localhost:4200")
+@RequestMapping("/sources")
 public class MediaSourceController {
 
     @Autowired
