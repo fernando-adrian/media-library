@@ -1,22 +1,28 @@
 package com.fernandorobles.medialibrary.controller;
 
+import com.fernandorobles.medialibrary.advice.exceptions.ErrorResponse;
+import com.fernandorobles.medialibrary.advice.exceptions.MediaSourceNotFoundException;
 import com.fernandorobles.medialibrary.entity.MediaSource;
 import com.fernandorobles.medialibrary.service.MediaSourceService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.embedded.EmbeddedWebServerFactoryCustomizerAutoConfiguration;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.Option;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/sources")
+@Slf4j
 public class MediaSourceController {
 
+    @Value("${reflectoring.trace:false}")
+    private boolean printStackTrace;
     @Autowired
     private MediaSourceService mediaSourceService;
 
@@ -30,11 +36,37 @@ public class MediaSourceController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MediaSource> getMediaSource(@PathVariable Long id){
-        Optional<MediaSource> ms = mediaSourceService.findById(id);
-        return ms.map((mediaSource)-> new ResponseEntity<>(mediaSource, HttpStatus.OK))
-                .orElseGet(()->new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public ResponseEntity<MediaSource> getMediaSource(@PathVariable Long id) throws MediaSourceNotFoundException {
+        Optional<MediaSource> source = mediaSourceService.findById(id);
+        return source.map((mediaSource)-> new ResponseEntity<>(mediaSource, HttpStatus.OK))
+                .orElseThrow(()-> new MediaSourceNotFoundException("Media Source with id (" + id + ") not found"));
 
+    }
+
+    @ExceptionHandler(MediaSourceNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<ErrorResponse> handleMediaSourceNotFoundException(
+            MediaSourceNotFoundException exception
+    ){
+        log.error("failed to find the requested element", exception);
+        return buildErrorResponse(exception, HttpStatus.NOT_FOUND);
+    }
+
+    private ResponseEntity<ErrorResponse> buildErrorResponse(
+            MediaSourceNotFoundException exception,
+            HttpStatus httpStatus
+    ) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                httpStatus.value(),
+                exception.getMessage()
+        );
+
+        if (printStackTrace){
+            errorResponse.setStackTrace(Arrays.toString(exception.getStackTrace()));
+        }
+        return ResponseEntity
+                .status(httpStatus)
+                .body(errorResponse);
     }
 
     @PostMapping("/")
